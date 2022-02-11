@@ -1,0 +1,77 @@
+<!-- import js-cookie -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+
+<!-- import tag for creating the cookie that stores UTM parameters-->
+<script type="text/javascript">
+  // Helper funtion to retrieves the specific parameter
+  function getParameterByName(name) {
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(location.search);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+  }
+  // Sets the cookie
+  function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+  }
+
+  // array of all parameters to track in URL
+  var all_the_params_to_track = [
+    'utm_source',
+    'utm_medium',
+    'utm_campaign',
+    'utm_term',
+    'utm_content',
+    'gclid'
+  ];
+  
+  // Individual variables of all parameters to track in URL
+  var utm_source = '';
+  var utm_medium = '';
+  var utm_campaign = '';
+  var utm_term = '';
+  var utm_content = '';
+  var gclid = '';
+
+  // UR:
+  var URL = location.protocol + '//' + location.host + location.pathname;
+  var URL_with_params = URL + location.search;
+
+  // Loops through all of the utm parameters in the array and assigns the correct value to the variables based on the URL
+  all_the_params_to_track.forEach(function(param) {
+    var pValue = getParameterByName(param);
+    if (pValue != null || pValue != '') {
+      switch (param) {
+        case 'utm_source':
+          utm_source = pValue;
+          break;
+        case 'utm_medium':
+          utm_medium = pValue;
+          break;
+        case 'utm_campaign':
+          utm_campaign = pValue;
+          break;
+        case 'utm_term':
+          utm_term = pValue;
+          break;
+        case 'utm_content':
+          utm_content = pValue;
+          break;
+        case 'gclid':
+          gclid = pValue;
+          break;
+      }
+    }
+  });
+  
+  // Creates a cookie with the UTM information if the user lands on the site with UTM parameters
+  if ((utm_source != null && utm_source != '') || (utm_medium != null && utm_medium != '') && (utm_campaign != null && utm_campaign != '') || (utm_term != null && utm_term != '') || (utm_content != null && utm_content != '') || (gclid != null && gclid != '')) {
+
+    Cookies.set('__gtm_url_with_params', URL_with_params, { expires: 1/24, domain: '.copado.com' });
+  }
+</script>
